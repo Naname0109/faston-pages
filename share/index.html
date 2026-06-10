@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>共有リスト - ファストン</title>
+  <meta name="theme-color" content="#FF6B35">
+  <meta name="description" content="ファストンのお気に入りリストを閲覧。">
+  <style>
+    :root { --primary: #FF6B35; --ink: #1A1A1A; --bg: #FFFCF9; --muted: #6E665F; --card: #fff; --border: rgba(0,0,0,.06); }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Sans", "Yu Gothic", sans-serif; color: var(--ink); background: var(--bg); margin: 0; line-height: 1.6; }
+    .wrap { max-width: 640px; margin: 0 auto; padding: 24px 16px 80px; }
+    header { padding: 16px 0 24px; }
+    .header-row { display: flex; align-items: center; gap: 12px; }
+    .header-row .icon { width: 44px; height: 44px; background: var(--primary); border-radius: 12px; color: white; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+    h1 { font-size: 20px; margin: 0; flex: 1; }
+    h1 small { display: block; font-size: 12px; color: var(--muted); font-weight: 400; margin-top: 2px; }
+    .install { background: var(--primary); color: white; padding: 8px 14px; border-radius: 10px; text-decoration: none; font-size: 13px; font-weight: 700; white-space: nowrap; }
+    .shop { background: var(--card); border-radius: 14px; padding: 16px; margin: 12px 0; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+    .shop h2 { font-size: 16px; margin: 0 0 6px; }
+    .row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+    .tag { font-size: 12px; padding: 3px 10px; background: rgba(255,107,53,.1); color: var(--primary); border-radius: 999px; }
+    .meta { font-size: 13px; color: var(--muted); }
+    .memo { font-size: 14px; margin: 8px 0 0; padding: 8px 12px; background: rgba(0,0,0,.03); border-radius: 8px; }
+    .map-link { display: inline-block; margin-top: 8px; font-size: 13px; color: var(--primary); text-decoration: none; }
+    .empty, .err, .loading { text-align: center; padding: 48px 16px; color: var(--muted); }
+    .err { color: #c62828; }
+    .footer { text-align: center; color: var(--muted); font-size: 12px; padding: 24px 0; }
+    .footer a { color: var(--muted); }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink: #E0E0E0; --bg: #121212; --muted: #999; --card: #1E1E1E; --border: rgba(255,255,255,.06); }
+      .memo { background: rgba(255,255,255,.04); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="header-row">
+        <div class="icon">🍽</div>
+        <h1>ファストン <small id="title">共有リスト</small></h1>
+        <a class="install" href="https://apps.apple.com/app/idTBA">アプリで開く</a>
+      </div>
+    </header>
+    <main id="main">
+      <div class="loading">読み込んでいます…</div>
+    </main>
+    <div class="footer">
+      <a href="../index.html">ファストンについて</a> ・
+      <a href="../privacy.html">プライバシー</a> ・
+      <a href="../terms.html">利用規約</a>
+    </div>
+  </div>
+
+  <script type="module">
+    // Firebase Web SDK でリストを取得して描画。
+    // firebaseConfig は Firebase Console (Project Settings → Your apps → Web app)
+    // から取得した値で置換してください（apiKey 等は Web 公開前提なので公開しても問題なし）。
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+    // Firebase Web SDK 用 config (FastOn プロジェクト)。
+    // セキュリティは Firestore Rules で担保しているため API キーの公開は仕様。
+    const firebaseConfig = {
+      apiKey: "AIzaSyDCwp1x6LYmBu15bD9b4QD8a_DVR6frGfQ",
+      authDomain: "faston-bbe0e.firebaseapp.com",
+      projectId: "faston-bbe0e",
+      storageBucket: "faston-bbe0e.firebasestorage.app",
+      messagingSenderId: "265346982286",
+      appId: "1:265346982286:web:bfa58a9973a906113304df",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id');
+    const main = document.getElementById('main');
+    const titleEl = document.getElementById('title');
+
+    if (!id) {
+      main.innerHTML = '<div class="empty">共有 ID がありません。</div>';
+    } else {
+      try {
+        const snap = await getDoc(doc(db, 'shared_lists', id));
+        if (!snap.exists()) {
+          main.innerHTML = '<div class="empty">このリストは見つかりません（期限切れの可能性があります）。</div>';
+        } else {
+          const data = snap.data();
+          render(data);
+        }
+      } catch (e) {
+        console.error(e);
+        main.innerHTML = `<div class="err">読み込みに失敗しました。<br><small>${e.message || e}</small></div>`;
+      }
+    }
+
+    function esc(s) { return (s ?? '').toString().replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c])); }
+    function statusEmoji(s) {
+      return ({visited: '✅ 行った', wantToGo: '🎯 行きたい', favorite: '⭐ お気に入り'})[s] || '';
+    }
+
+    function render(data) {
+      titleEl.textContent = data.title || '共有リスト';
+      const shops = Array.isArray(data.shops) ? data.shops : [];
+      if (shops.length === 0) {
+        main.innerHTML = '<div class="empty">お店が登録されていません。</div>';
+        return;
+      }
+      const html = shops.map(s => {
+        const tags = []
+          .concat(s.genreTags || [], s.areaTags || [], s.stationTags || [],
+                  s.facilityTags || [], s.sceneTags || [], s.customTags || [])
+          .filter(Boolean);
+        const tagHtml = tags.length
+          ? `<div class="row">${tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>` : '';
+        const price = (s.priceRange ?? 0) > 0 ? `<span>${'¥'.repeat(Math.max(1, Math.min(4, s.priceRange)))}</span>` : '';
+        const rating = (s.rating ?? 0) > 0 ? `<span>★ ${Number(s.rating).toFixed(1)}</span>` : '';
+        const status = statusEmoji(s.status);
+        const meta = [status, price, rating].filter(Boolean).join('  ・  ');
+        const memo = s.memo ? `<p class="memo">${esc(s.memo)}</p>` : '';
+        const mapsHref = s.latitude && s.longitude
+          ? `https://www.google.com/maps/search/?api=1&query=${s.latitude},${s.longitude}`
+          : (s.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.address)}` : null);
+        const mapLink = mapsHref
+          ? `<a class="map-link" href="${mapsHref}" target="_blank" rel="noopener">📍 Google マップで開く</a>` : '';
+        return `<article class="shop">
+          <h2>${esc(s.name)}</h2>
+          ${meta ? `<div class="meta">${meta}</div>` : ''}
+          ${tagHtml}
+          ${s.address ? `<div class="meta">${esc(s.address)}</div>` : ''}
+          ${memo}
+          ${mapLink}
+        </article>`;
+      }).join('');
+      main.innerHTML = `<p class="meta">${shops.length} 件のお店</p>${html}`;
+    }
+  </script>
+</body>
+</html>

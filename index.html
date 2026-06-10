@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ファストン - 体の中が見える断食タイマー</title>
+  <meta name="description" content="16時間断食をサポートする日本語ネイティブのタイマーアプリ。脂肪燃焼・ケトーシス・オートファジーの進行をリアルタイム表示。">
+  <meta name="theme-color" content="#FF6B35">
+  <link rel="icon" href="favicon.png">
+  <style>
+    :root { --primary: #FF6B35; --accent: #2EC4B6; --ink: #1A1A1A; --bg: #FFFBF7; --muted: #6E665F; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Sans", "Yu Gothic", sans-serif; color: var(--ink); background: var(--bg); margin: 0; line-height: 1.7; }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 32px 24px 64px; }
+    header { text-align: center; padding: 48px 0 24px; }
+    .icon { display: inline-block; width: 88px; height: 88px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 22px; line-height: 88px; font-size: 44px; color: white; }
+    h1 { font-size: 28px; font-weight: 700; margin: 16px 0 8px; }
+    .tagline { color: var(--muted); margin: 0 0 32px; }
+    .cta { display: inline-block; background: var(--primary); color: white; padding: 12px 24px; border-radius: 12px; text-decoration: none; font-weight: 700; margin: 16px 8px; }
+    .cta.secondary { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+    section { background: white; border-radius: 16px; padding: 24px; margin: 16px 0; box-shadow: 0 1px 3px rgba(0,0,0,.04); border: 1px solid rgba(0,0,0,.06); }
+    h2 { font-size: 18px; margin: 0 0 12px; }
+    ul { padding-left: 20px; }
+    .stages { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; list-style: none; }
+    .stages li { background: #FFF3ED; padding: 6px 12px; border-radius: 8px; font-size: 14px; }
+    footer { text-align: center; color: var(--muted); font-size: 13px; padding: 32px 0; }
+    footer a { color: var(--muted); margin: 0 8px; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink: #E0E0E0; --bg: #1A1A2E; --muted: #999; }
+      section { background: #252540; border-color: rgba(255,255,255,.06); }
+      .stages li { background: #2A2A45; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="icon">⏱</div>
+      <h1>ファストン</h1>
+      <p class="tagline">体の中が見える断食タイマー。脂肪燃焼からオートファジーまで、リアルタイムで可視化。</p>
+      <a class="cta" href="https://apps.apple.com/app/idTBA">App Store で入手</a>
+    </header>
+
+    <section>
+      <h2>体内ステージをリアルタイム表示</h2>
+      <ul class="stages">
+        <li>🍽️ 消化中</li>
+        <li>📉 血糖安定</li>
+        <li>🔥 脂肪燃焼</li>
+        <li>⚡ ケトーシス</li>
+        <li>🧬 オートファジー</li>
+        <li>💪 成長ホルモン</li>
+        <li>🔄 深層修復</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>主な機能</h2>
+      <ul>
+        <li>16:8 断食タイマー（遡り開始対応）</li>
+        <li>体内ステージの進行をリアルタイム可視化</li>
+        <li>ストリーク（連続日数）で習慣化をサポート</li>
+        <li>Widget / Live Activity でロック画面からも確認</li>
+        <li>体重記録 + HealthKit 連携で効果を実感</li>
+        <li>週/月/年の統計グラフ</li>
+        <li>バッジ/実績システム</li>
+        <li>完全オフライン（ネット接続不要）</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>料金</h2>
+      <p>無料: 16:8 タイマー / 体内ステージ / ストリーク / 直近7日の履歴</p>
+      <p>Premium: 全プラン / Widget+LA / 全統計 / 体重+HealthKit / バッジ / CSV / カスタム通知 / 広告なし</p>
+      <p style="color:var(--muted); font-size:13px;">月額 ¥480 / 年額 ¥2,900 (月換算¥242) ・ 年額プランは7日間無料トライアル</p>
+    </section>
+
+    <footer>
+      <a href="privacy.html">プライバシーポリシー</a>
+      ・
+      <a href="terms.html">利用規約</a>
+      <p>&copy; 2026 Masahiro Akebi</p>
+    </footer>
+  </div>
+</body>
+</html>
